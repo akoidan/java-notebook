@@ -1,0 +1,25 @@
+<project basedir="."  name="mybeanstalkproject">
+	<property file="${basedir}/build.properties"/>
+	<property file="${basedir}/credentials.properties"/>
+
+	<taskdef resource="org/apache/ivy/ant/antlib.xml">
+		<classpath>
+			<pathelement location="${ivy.jar}"/>
+		</classpath>
+	</taskdef>
+
+	<target name="initDB">
+		<sql	driver="${db.driver}"
+				url="${db.url}"
+				userid="${db.username}"
+				password="${db.password}"
+				>
+			select * from dual;
+		</sql>
+	</target>
+
+	<target name="default">
+		<echo>Hello dude</echo>
+	</target>
+
+</project>
