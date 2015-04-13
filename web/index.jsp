@@ -4,6 +4,6 @@
     <title></title>
   </head>
   <body>
- <h1>It works</h1>
+   <c:out value="This is sparta"/>
   </body>
 </html>

@@ -1,6 +1,6 @@
-<project basedir="."  name="mybeanstalkproject">
+<project basedir="." name="notebook.Notebook" xmlns:ivy="antlib:org.apache.ivy.ant">
 	<property file="${basedir}/build.properties"/>
-	<property file="${basedir}/credentials.properties"/>
+	<property file="${basedir}/database.properties"/>
 
 	<taskdef resource="org/apache/ivy/ant/antlib.xml">
 		<classpath>
@@ -8,18 +8,65 @@
 		</classpath>
 	</taskdef>
 
-	<target name="initDB">
-		<sql	driver="${db.driver}"
-				url="${db.url}"
-				userid="${db.username}"
-				password="${db.password}"
+	<target name="initDB" description="Create all required database tables">
+		<ivy:retrieve pattern="${db.jar}" conf="jdbc" />
+		<sql driver="${db.driver}"
+			  url="${db.url}"
+			  userid="${db.username}"
+			  password="${db.password}"
+			  classpath="${db.jar}"
 				>
-			select * from dual;
+			<file name="${initdb.file}"/>
 		</sql>
 	</target>
 
-	<target name="default">
-		<echo>Hello dude</echo>
+	<target name="clean">
+		<delete dir="${build.home}"/>
+		<!--<delete dir="${build.classes.home}"/>-->
+		<!--<delete dir="${basedir}/build/war"/>-->
+	</target>
+
+	<target name="init" depends="clean">
+		<mkdir dir="${build.home}"/>
+		<mkdir dir="${build.classes.home}"/>
+		<mkdir dir="${build.lib.home}"/>
+	</target>
+
+	<target name="resolve-ivy-deps" depends="init">
+		<ivy:retrieve pattern="${build.lib.home}/[artifact].[ext]" conf="default"/>
+	</target>
+
+	<target name="compile" depends="resolve-ivy-deps">
+		<javac srcdir="${src.main}" destdir="${build.classes.home}" debug="true" debuglevel="lines,vars,source" encoding="UTF-8" deprecation="true">
+		</javac>
+	</target>
+
+	<target name="package" depends="compile">
+
+		<tstamp>
+			<format property="TODAY" pattern="yyyy-MM-dd HH:mm:ss"/>
+		</tstamp>
+
+		<mkdir dir="${build.war.home}"/>
+		<war warfile="${build.war.file}" webxml="${basedir}/web/WEB-INF/web.xml">
+			<webinf dir="${basedir}/web/WEB-INF"/>
+			<!--<lib dir="${lib.home}" /> -->
+			<classes dir="${build.classes.home}"/>
+			<fileset dir="${basedir}/web"/>
+			<manifest>
+				<attribute name="Built-By" value="${user.name}"/>
+				<attribute name="Implementation-Title" value="${ant.project.name}"/>
+				<attribute name="Implementation-Time" value="${TODAY}"/>
+			</manifest>
+		</war>
+	</target>
+
+
+	<target name="idea" description="Resolves IDEA syntax for ivy ant">
+		<echo>
+			pacman -S apache-ivy
+			sudo ln -s /usr/share/java/apache-ivy/ivy.jar /usr/share/intellij-idea-ultimate-edition/lib/ant/lib/ivy.jar
+		</echo>
 	</target>
 
 </project>

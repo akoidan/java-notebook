@@ -1,6 +1,14 @@
-<ivy-module version="2.0">
-    <info organisation="" module="hello-ivy"/>
+<?xml version="1.0" encoding="UTF-8"?>
+<ivy-module version="2.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://ant.apache.org/ivy/schemas/ivy.xsd">
+    <info organisation="" module="notebook-ivy"/>
+
+    <configurations>
+        <conf name="default" visibility="public" extends="jdbc"/>
+        <conf name="jdbc" visibility="public"/>
+    </configurations>
+
     <dependencies>
-        <dependency org="mysql" name="mysql-connector-java" rev="5.1.6"/>
+        <dependency org="mysql" name="mysql-connector-java" rev="5.1.6" conf="jdbc->default"/>
+        <dependency org="junit" name="junit" rev="4.12" conf="default"/>
     </dependencies>
 </ivy-module>
