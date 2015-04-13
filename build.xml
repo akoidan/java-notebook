@@ -64,6 +64,7 @@
 
 	<target name="idea" description="Resolves IDEA syntax for ivy ant">
 		<echo>
+			yaourt -S jetty
 			pacman -S apache-ivy
 			sudo ln -s /usr/share/java/apache-ivy/ivy.jar /usr/share/intellij-idea-ultimate-edition/lib/ant/lib/ivy.jar
 		</echo>
